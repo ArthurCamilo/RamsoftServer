@@ -38,7 +38,6 @@ namespace RamsoftServer.Migrations
                 {
                     table.PrimaryKey("PK_Columns", x => x.Id);
                 });
-
         }
 
         /// <inheritdoc />

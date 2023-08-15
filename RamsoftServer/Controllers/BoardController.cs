@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using RamsoftServer.Infrastructure.Repositories;
-using RamsoftServer.Models;
-using RamsoftServer.Services;
+using RamsoftServer.Domain.Entities;
+using RamsoftServer.Domain.UseCases;
+using RamsoftServer.Interfaces;
 
 namespace RamsoftServer.Controllers
 {
@@ -15,14 +15,11 @@ namespace RamsoftServer.Controllers
         
         private IColumnRepository _columnRepository;
 
-        private BoardService _boardService;
-
         public BoardController(ILogger<BoardController> logger, ICardRepository cardRepository, IColumnRepository columnRepository)
         {
             _logger = logger;
             _cardRepository = cardRepository;
             _columnRepository = columnRepository;
-            _boardService = new BoardService(cardRepository);
         }
 
         [HttpGet("columns")]
@@ -40,25 +37,29 @@ namespace RamsoftServer.Controllers
         [HttpPost("card")]
         public Card CreateCard(Card card)
         {
-            return _cardRepository.CreateCard(card);
+            var useCase = new CreateCardInteractor(_cardRepository);
+            return useCase.Handle(card);
         }
 
         [HttpPut("card")]
         public Card UpdateCard(Card card)
         {
-            return _cardRepository.UpdateCard(card);
+            var useCase = new UpdateCardInteractor(_cardRepository);
+            return useCase.Handle(card);
         }
 
         [HttpPut("move-card")]
         public void MoveCard(Card card, int previousColumnId, int previousIndex)
         {
-            _boardService.MoveCard(card, previousColumnId, previousIndex);
+            var useCase = new MoveCardInteractor(_cardRepository);
+            useCase.Handle(card, previousColumnId, previousIndex);
         }
 
         [HttpDelete("card")]
         public void DeleteCard(int cardId)
         {
-            _boardService.DeleteCard(cardId);
+            var useCase = new DeleteCardInteractor(_cardRepository);
+            useCase.Handle(cardId);
         }
 
     }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RamsoftServer.Models;
+using RamsoftServer.Domain.Entities;
 
 namespace RamsoftServer.Infrastructure
 {

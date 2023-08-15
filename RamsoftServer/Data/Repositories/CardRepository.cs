@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RamsoftServer.Models;
+using RamsoftServer.Domain.Entities;
+using RamsoftServer.Interfaces;
 
 namespace RamsoftServer.Infrastructure.Repositories
 {
@@ -26,7 +27,8 @@ namespace RamsoftServer.Infrastructure.Repositories
             if (card != null)
             {
                 _db.Cards.Remove(card);
-            } 
+                _db.SaveChanges();
+            }
             else
             {
                 throw new Exception("Card with id {cardId} does not exist");

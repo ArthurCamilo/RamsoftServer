@@ -1,6 +1,6 @@
-﻿using RamsoftServer.Models;
+﻿using RamsoftServer.Domain.Entities;
 
-namespace RamsoftServer.Infrastructure.Repositories
+namespace RamsoftServer.Interfaces
 {
     public interface IColumnRepository
     {

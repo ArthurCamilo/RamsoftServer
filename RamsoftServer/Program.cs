@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyModel;
 using RamsoftServer.Infrastructure;
 using RamsoftServer.Infrastructure.Repositories;
+using RamsoftServer.Interfaces;
 
 var allowSpecificOrigins = "_allowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: allowSpecificOrigins,
                       builder =>
                       {
-                          builder.WithOrigins("http://localhost:3000");
+                          builder.WithOrigins("http://localhost:3000").WithMethods();
+                          builder.AllowAnyMethod();
+                          builder.AllowAnyHeader();
                       });
 });
 

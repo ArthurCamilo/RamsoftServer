@@ -1,4 +1,4 @@
-﻿namespace RamsoftServer.Models
+﻿namespace RamsoftServer.Domain.Entities
 {
     public class Column
     {

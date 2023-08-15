@@ -1,4 +1,5 @@
-﻿using RamsoftServer.Models;
+﻿using RamsoftServer.Domain.Entities;
+using RamsoftServer.Interfaces;
 
 namespace RamsoftServer.Infrastructure.Repositories
 {

@@ -1,6 +1,6 @@
-﻿using RamsoftServer.Models;
+﻿using RamsoftServer.Domain.Entities;
 
-namespace RamsoftServer.Infrastructure.Repositories
+namespace RamsoftServer.Interfaces
 {
     public interface ICardRepository
     {
@@ -12,7 +12,7 @@ namespace RamsoftServer.Infrastructure.Repositories
         Card UpdateCard(Card card);
 
         Card CreateCard(Card card);
-        
+
         void DeleteCard(int cardId);
 
     }
