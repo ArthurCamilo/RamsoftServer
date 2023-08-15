@@ -1,4 +1,5 @@
-﻿using RamsoftServer.Domain.Entities;
+﻿using RamsoftServer.Application.DTO;
+using RamsoftServer.Domain.Entities;
 using RamsoftServer.Interfaces;
 
 namespace RamsoftServer.Domain.UseCases
@@ -12,39 +13,45 @@ namespace RamsoftServer.Domain.UseCases
             _cardRepository = cardRepository;
         }
 
-        public void Handle(Card movedCard, int previousColumnId, int previousIndex)
+        public void Handle(MoveCardDTO moveCardDTO)
         {
-            _cardRepository.UpdateCard(movedCard);
-            ReorderCards(movedCard, previousColumnId, previousIndex);
-        }
+            var card = _cardRepository.GetCardById(moveCardDTO.CardId);
 
-        private void ReorderCards(Card card, int previousColumnId, int previousIndex)
-        {
-            if (previousColumnId == card.ColumnId && previousIndex != card.Index)
+            if (card != null)
             {
-                var otherCards = _cardRepository.GetCardsByColumnId(card.ColumnId).Where(c => c.Id != card.Id).ToList();
-                ReorderCardsWithinColumn(card, otherCards, previousIndex, false);
-            }
-            else if (previousColumnId != card.ColumnId)
-            {
-                var previousColumnCards = _cardRepository.GetCardsByColumnId(previousColumnId).Where(c => c.Id != card.Id).ToList();
-                ReorderCardsWithinColumn(card, previousColumnCards, previousIndex, true);
-
-                var newColumnCards = _cardRepository.GetCardsByColumnId(card.ColumnId).Where(c => c.Id != card.Id).ToList();
-                ReorderCardsInNewColumn(card, newColumnCards);
+                ReorderCards(moveCardDTO);
+                card.Index = moveCardDTO.NewIndex;
+                _cardRepository.UpdateCard(card);
             }
         }
 
-        private void ReorderCardsWithinColumn(Card updatedCard, List<Card> otherCards, int previousIndex, bool acrossColumns)
+        private void ReorderCards(MoveCardDTO moveCardDTO)
+        {
+            if (moveCardDTO.PreviousColumnId == moveCardDTO.NewColumnId && moveCardDTO.PreviousIndex != moveCardDTO.NewIndex)
+            {
+                var otherCards = _cardRepository.GetCardsByColumnId(moveCardDTO.NewColumnId).Where(c => c.Id != moveCardDTO.CardId).ToList();
+                ReorderCardsWithinColumn(moveCardDTO, otherCards, false);
+            }
+            else if (moveCardDTO.PreviousColumnId != moveCardDTO.NewColumnId)
+            {
+                var previousColumnCards = _cardRepository.GetCardsByColumnId(moveCardDTO.PreviousColumnId).Where(c => c.Id != moveCardDTO.CardId).ToList();
+                ReorderCardsWithinColumn(moveCardDTO, previousColumnCards, true);
+
+                var newColumnCards = _cardRepository.GetCardsByColumnId(moveCardDTO.NewColumnId).Where(c => c.Id != moveCardDTO.CardId).ToList();
+                ReorderCardsInNewColumn(moveCardDTO, newColumnCards);
+            }
+        }
+
+        private void ReorderCardsWithinColumn(MoveCardDTO moveCardDTO, List<Card> otherCards, bool acrossColumns)
         {
             otherCards.ForEach(card =>
             {
-                if (card.Index > previousIndex && (updatedCard.Index > previousIndex || acrossColumns))
+                if (card.Index > moveCardDTO.PreviousIndex && (moveCardDTO.NewIndex > moveCardDTO.PreviousIndex || acrossColumns))
                 {
                     card.Index = card.Index - 1;
                     _cardRepository.UpdateCard(card);
                 }
-                else if (card.Index < previousIndex && (updatedCard.Index < previousIndex || acrossColumns))
+                else if (card.Index < moveCardDTO.PreviousIndex && (moveCardDTO.NewIndex < moveCardDTO.PreviousIndex || acrossColumns))
                 {
                     card.Index = card.Index + 1;
                     _cardRepository.UpdateCard(card);
@@ -52,11 +59,11 @@ namespace RamsoftServer.Domain.UseCases
             });
         }
 
-        private void ReorderCardsInNewColumn(Card updatedCard, List<Card> otherCards)
+        private void ReorderCardsInNewColumn(MoveCardDTO moveCardDTO, List<Card> otherCards)
         {
             otherCards.ForEach(card =>
             {
-                if (card.Index >= updatedCard.Index)
+                if (card.Index >= moveCardDTO.NewIndex)
                 {
                     card.Index = card.Index + 1;
                     _cardRepository.UpdateCard(card);

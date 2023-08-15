@@ -1,23 +1,21 @@
 using Microsoft.AspNetCore.Mvc;
+using RamsoftServer.Application.DTO;
 using RamsoftServer.Domain.Entities;
 using RamsoftServer.Domain.UseCases;
 using RamsoftServer.Interfaces;
 
-namespace RamsoftServer.Controllers
+namespace RamsoftServer.Application.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class BoardController : ControllerBase
     {
-        private readonly ILogger<BoardController> _logger;
-
         private ICardRepository _cardRepository;
-        
+
         private IColumnRepository _columnRepository;
 
-        public BoardController(ILogger<BoardController> logger, ICardRepository cardRepository, IColumnRepository columnRepository)
+        public BoardController(ICardRepository cardRepository, IColumnRepository columnRepository)
         {
-            _logger = logger;
             _cardRepository = cardRepository;
             _columnRepository = columnRepository;
         }
@@ -35,24 +33,24 @@ namespace RamsoftServer.Controllers
         }
 
         [HttpPost("card")]
-        public Card CreateCard(Card card)
+        public Card CreateCard(CreateCardDTO createCardDTO)
         {
             var useCase = new CreateCardInteractor(_cardRepository);
-            return useCase.Handle(card);
+            return useCase.Handle(createCardDTO);
         }
 
         [HttpPut("card")]
-        public Card UpdateCard(Card card)
+        public Card UpdateCard(UpdateCardDTO updateCardDTO)
         {
             var useCase = new UpdateCardInteractor(_cardRepository);
-            return useCase.Handle(card);
+            return useCase.Handle(updateCardDTO);
         }
 
         [HttpPut("move-card")]
-        public void MoveCard(Card card, int previousColumnId, int previousIndex)
+        public void MoveCard(MoveCardDTO moveCardDTO)
         {
             var useCase = new MoveCardInteractor(_cardRepository);
-            useCase.Handle(card, previousColumnId, previousIndex);
+            useCase.Handle(moveCardDTO);
         }
 
         [HttpDelete("card")]

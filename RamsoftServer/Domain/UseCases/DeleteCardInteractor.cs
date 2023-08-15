@@ -13,7 +13,6 @@ namespace RamsoftServer.Domain.UseCases
             _cardRepository = repository;
         }
 
-
         public void Handle(int cardId)
         {
             var dbCard = _cardRepository.GetCardById(cardId);

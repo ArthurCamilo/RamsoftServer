@@ -1,4 +1,5 @@
-﻿using RamsoftServer.Domain.Entities;
+﻿using RamsoftServer.Application.DTO;
+using RamsoftServer.Domain.Entities;
 using RamsoftServer.Interfaces;
 
 namespace RamsoftServer.Domain.UseCases
@@ -13,9 +14,17 @@ namespace RamsoftServer.Domain.UseCases
             _cardRepository = repository;
         }
 
-        public void Handle(Card card)
+        public Card Handle(CreateCardDTO createCardDTO)
         {
-            _cardRepository.CreateCard(card);
+            var index = _cardRepository.GetCardsByColumnId(createCardDTO.ColumnId).Max(c => c.Index) + 1;
+
+            var card = new Card()
+            {
+                Index = index,
+                Name = createCardDTO.CardName,
+            };
+
+            return _cardRepository.CreateCard(card);
         }
     }
 }
