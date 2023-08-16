@@ -21,6 +21,7 @@ namespace RamsoftServer.Domain.UseCases
             {
                 ReorderCards(moveCardDTO);
                 card.Index = moveCardDTO.NewIndex;
+                card.ColumnId = moveCardDTO.NewColumnId;
                 _cardRepository.UpdateCard(card);
             }
         }

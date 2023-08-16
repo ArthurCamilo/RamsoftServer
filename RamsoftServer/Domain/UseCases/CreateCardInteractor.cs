@@ -16,12 +16,13 @@ namespace RamsoftServer.Domain.UseCases
 
         public Card Handle(CreateCardDTO createCardDTO)
         {
-            var index = _cardRepository.GetCardsByColumnId(createCardDTO.ColumnId).Max(c => c.Index) + 1;
+            var index = _cardRepository.GetCardsByColumnId(createCardDTO.ColumnId).DefaultIfEmpty().Max(c => c?.Index ?? 0) + 1;
 
             var card = new Card()
             {
                 Index = index,
                 Name = createCardDTO.CardName,
+                ColumnId = createCardDTO.ColumnId,
             };
 
             return _cardRepository.CreateCard(card);

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34003.232
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RamsoftServer", "RamsoftServer\RamsoftServer.csproj", "{114DFA9D-D9AF-4D9D-96B5-A06AE7742136}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RamsoftServerTests", "RamsoftServerTests\RamsoftServerTests.csproj", "{0DE74AA1-37E0-4529-866E-400623191509}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{114DFA9D-D9AF-4D9D-96B5-A06AE7742136}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{114DFA9D-D9AF-4D9D-96B5-A06AE7742136}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{114DFA9D-D9AF-4D9D-96B5-A06AE7742136}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DE74AA1-37E0-4529-866E-400623191509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DE74AA1-37E0-4529-866E-400623191509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DE74AA1-37E0-4529-866E-400623191509}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DE74AA1-37E0-4529-866E-400623191509}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

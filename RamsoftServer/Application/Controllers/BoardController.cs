@@ -21,15 +21,10 @@ namespace RamsoftServer.Application.Controllers
         }
 
         [HttpGet("columns")]
-        public List<Column> GetColumns()
+        public List<ColumnsDTO> GetColumns()
         {
-            return _columnRepository.GetColumns();
-        }
-
-        [HttpGet("column-cards")]
-        public List<Card> GetColumnCards(int columnId)
-        {
-            return _cardRepository.GetCardsByColumnId(columnId);
+            var useCase = new GetColumnsInteractor(_cardRepository, _columnRepository);
+            return useCase.Handle();
         }
 
         [HttpPost("card")]
