@@ -32,18 +32,35 @@ namespace RamsoftServerTests.Mocks
 
         public Card GetCardById(int cardId)
         {
-            return Cards.Find(c => c.Id == cardId);
+            var card = Cards.Find(c => c.Id == cardId);
+            return new Card
+            {
+                Id = card.Id,
+                ColumnId = card.ColumnId,
+                Index = card.Index,
+                Name = card.Name,
+            };
         }
 
         public List<Card> GetCardsByColumnId(int columnId)
         {
-            return Cards.Where(c => c.ColumnId == columnId).ToList();
+            return (from c in Cards
+                   where c.ColumnId == columnId
+                   select new Card
+                   {
+                       Id = c.Id,
+                       ColumnId = c.ColumnId,
+                       Index = c.Index,
+                       Name = c.Name,
+                   }).ToList();
         }
 
         public Card UpdateCard(Card card)
         {
             var dbCard = Cards.Find(c => c.Id == card.Id);
-            dbCard = card;
+            dbCard.Index = card.Index; 
+            dbCard.Name = card.Name;
+            dbCard.ColumnId = card.ColumnId;
             return dbCard;
         }
     }

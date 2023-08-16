@@ -30,46 +30,48 @@ namespace RamsoftServer.Domain.UseCases
         {
             if (moveCardDTO.PreviousColumnId == moveCardDTO.NewColumnId && moveCardDTO.PreviousIndex != moveCardDTO.NewIndex)
             {
-                var otherCards = _cardRepository.GetCardsByColumnId(moveCardDTO.NewColumnId).Where(c => c.Id != moveCardDTO.CardId).ToList();
-                ReorderCardsWithinColumn(moveCardDTO, otherCards, false);
+                ReorderCardsWithinColumn(moveCardDTO);
             }
             else if (moveCardDTO.PreviousColumnId != moveCardDTO.NewColumnId)
             {
-                var previousColumnCards = _cardRepository.GetCardsByColumnId(moveCardDTO.PreviousColumnId).Where(c => c.Id != moveCardDTO.CardId).ToList();
-                ReorderCardsWithinColumn(moveCardDTO, previousColumnCards, true);
-
-                var newColumnCards = _cardRepository.GetCardsByColumnId(moveCardDTO.NewColumnId).Where(c => c.Id != moveCardDTO.CardId).ToList();
-                ReorderCardsInNewColumn(moveCardDTO, newColumnCards);
+                ReorderCardsInColumn(moveCardDTO.CardId, moveCardDTO.PreviousColumnId, moveCardDTO.PreviousIndex, -1);
+                ReorderCardsInColumn(moveCardDTO.CardId, moveCardDTO.NewColumnId, moveCardDTO.NewIndex, +1);
             }
         }
 
-        private void ReorderCardsWithinColumn(MoveCardDTO moveCardDTO, List<Card> otherCards, bool acrossColumns)
+        private void IncrementCards(List<Card> cards, int increment)
         {
-            otherCards.ForEach(card =>
+            cards.ForEach(card =>
             {
-                if (card.Index > moveCardDTO.PreviousIndex && (moveCardDTO.NewIndex > moveCardDTO.PreviousIndex || acrossColumns))
-                {
-                    card.Index = card.Index - 1;
-                    _cardRepository.UpdateCard(card);
-                }
-                else if (card.Index < moveCardDTO.PreviousIndex && (moveCardDTO.NewIndex < moveCardDTO.PreviousIndex || acrossColumns))
-                {
-                    card.Index = card.Index + 1;
-                    _cardRepository.UpdateCard(card);
-                }
+                card.Index += increment;
+                _cardRepository.UpdateCard(card);
             });
         }
 
-        private void ReorderCardsInNewColumn(MoveCardDTO moveCardDTO, List<Card> otherCards)
+        private void ReorderCardsWithinColumn(MoveCardDTO moveCardDTO)
         {
-            otherCards.ForEach(card =>
-            {
-                if (card.Index >= moveCardDTO.NewIndex)
-                {
-                    card.Index = card.Index + 1;
-                    _cardRepository.UpdateCard(card);
-                }
-            });
+            var goingUp = moveCardDTO.NewIndex > moveCardDTO.PreviousIndex;
+            var startIndex = goingUp ? moveCardDTO.PreviousIndex : moveCardDTO.NewIndex;
+            var endIndex = goingUp ? moveCardDTO.NewIndex : moveCardDTO.PreviousIndex;
+            var increment = goingUp ? -1 : +1;
+
+            var otherCards = (from c in _cardRepository.GetCardsByColumnId(moveCardDTO.NewColumnId)
+                             where c.Id != moveCardDTO.CardId
+                             && c.Index >= startIndex
+                             && c.Index <= endIndex
+                             select c).ToList();
+
+            IncrementCards(otherCards, increment);
+        }
+
+        private void ReorderCardsInColumn(int cardId, int columnId, int startIndex, int increment)
+        {
+            var newColumnCards = (from c in _cardRepository.GetCardsByColumnId(columnId)
+                                  where c.Id != cardId
+                                  && c.Index >= startIndex
+                                  select c).ToList();
+
+            IncrementCards(newColumnCards, increment);
         }
     }
 }
